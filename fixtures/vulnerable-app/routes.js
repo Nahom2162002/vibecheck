@@ -26,6 +26,22 @@ router.get('/profile', requireAuth, (req, res) => {
   res.json(req.user);
 });
 
+// VULNERABLE (IDOR, not missing-auth): requireAuth confirms the requester is
+// *someone*, but the handler never checks the invoice actually belongs to
+// them — any logged-in user can read any other user's invoice by id.
+router.get('/invoices/:id', requireAuth, async (req, res) => {
+  const invoice = await db.getInvoiceById(req.params.id);
+  res.json(invoice);
+});
+
+// SAFE: same shape, but compares the record's owner to the requester —
+// should NOT be flagged.
+router.get('/receipts/:id', requireAuth, async (req, res) => {
+  const receipt = await db.getReceiptById(req.params.id);
+  if (receipt.userId !== req.user.id) return res.status(403).end();
+  res.json(receipt);
+});
+
 // SAFE: public by convention (login) — should NOT be flagged.
 router.post('/login', (req, res) => {
   res.json({ ok: true });
