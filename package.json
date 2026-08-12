@@ -12,7 +12,9 @@
     "build": "tsc -p tsconfig.json",
     "dev": "ts-node src/cli.ts",
     "fixtures:generate": "node fixtures/generate.js",
-    "scan:fixture": "npm run build && npm run fixtures:generate && node dist/cli.js scan --local ./fixtures/vulnerable-app"
+    "fixtures:generate:history": "node fixtures/generate-history-fixture.js",
+    "scan:fixture": "npm run build && npm run fixtures:generate && node dist/cli.js scan --local ./fixtures/vulnerable-app",
+    "scan:fixture:history": "npm run build && npm run fixtures:generate:history && node dist/cli.js scan --local ./fixtures/vulnerable-app-history"
   },
   "dependencies": {
     "@babel/parser": "^7.25.0",

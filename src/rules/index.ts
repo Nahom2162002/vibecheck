@@ -1,4 +1,7 @@
 import type { RuleModule } from '../engine/types';
+import { secretsHistoryRule } from './secrets-history';
+
+export const ruleRegistry: RuleModule[] = [secretsHistoryRule];
 import { rateLimitingRule } from './rate-limiting';
 
 export const ruleRegistry: RuleModule[] = [rateLimitingRule];
