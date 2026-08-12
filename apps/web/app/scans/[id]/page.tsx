@@ -19,6 +19,8 @@ interface ScanResult {
   findings: Finding[];
   grade: string;
   scannedAt: string;
+  llmReviewRequested: boolean;
+  llmReviewApplied: boolean;
 }
 
 const SEVERITY_ORDER: Severity[] = ['critical', 'high', 'medium', 'low'];
@@ -106,6 +108,13 @@ export default function ScanReportPage() {
       <h1>vibecheck report</h1>
       <p className="repo-url">{result.repoUrl}</p>
       <div className={`grade grade-${result.grade}`}>{result.grade}</div>
+      {result.llmReviewRequested && (
+        <p className="stage">
+          {result.llmReviewApplied
+            ? 'AI second-pass review applied to ambiguous findings.'
+            : 'AI second-pass review was requested but skipped (no ANTHROPIC_API_KEY configured on the server).'}
+        </p>
+      )}
       {result.findings.length === 0 ? (
         <p>No findings. Nice.</p>
       ) : (
@@ -142,6 +151,8 @@ function stageLabel(stage: string): string {
       return 'Cloning repository…';
     case 'scanning':
       return 'Running checks…';
+    case 'reviewing':
+      return 'Running AI second-pass review…';
     default:
       return 'Working…';
   }

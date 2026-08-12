@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 
 export default function HomePage() {
   const [repoUrl, setRepoUrl] = useState('');
+  const [llmReview, setLlmReview] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
   const router = useRouter();
@@ -17,7 +18,7 @@ export default function HomePage() {
       const res = await fetch('/api/scans', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ repoUrl }),
+        body: JSON.stringify({ repoUrl, llmReview }),
       });
       const data = await res.json();
       if (!res.ok) {
@@ -48,6 +49,10 @@ export default function HomePage() {
           {submitting ? 'Starting…' : 'Scan'}
         </button>
       </form>
+      <label className="llm-review-toggle">
+        <input type="checkbox" checked={llmReview} onChange={(e) => setLlmReview(e.target.checked)} />
+        AI second-pass review of ambiguous findings (needs a server-side ANTHROPIC_API_KEY; silently skipped if unset)
+      </label>
       {error && <p className="error">{error}</p>}
     </main>
   );

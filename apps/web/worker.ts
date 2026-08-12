@@ -1,5 +1,5 @@
 import { Worker, Job } from 'bullmq';
-import { cloneRepo, runScan, computeGrade } from '@vibecheck/engine';
+import { cloneRepo, runScan, computeGrade, reviewFindings } from '@vibecheck/engine';
 import { getRedis } from './lib/redis';
 import { SCAN_QUEUE_NAME, type ScanJobData } from './lib/queue';
 import { saveScanResult } from './lib/result-store';
@@ -8,20 +8,28 @@ import type { ScanResult } from './lib/types';
 const worker = new Worker<ScanJobData>(
   SCAN_QUEUE_NAME,
   async (job: Job<ScanJobData>) => {
-    const { repoUrl } = job.data;
+    const { repoUrl, llmReview } = job.data;
     await job.updateProgress('cloning');
 
     const { path: repoPath, cleanup } = await cloneRepo(repoUrl);
     try {
       await job.updateProgress('scanning');
-      const findings = await runScan(repoPath);
-      const grade = computeGrade(findings);
+      let findings = await runScan(repoPath);
 
+      const canReview = llmReview && Boolean(process.env.ANTHROPIC_API_KEY);
+      if (canReview) {
+        await job.updateProgress('reviewing');
+        findings = await reviewFindings(repoPath, findings);
+      }
+
+      const grade = computeGrade(findings);
       const result: ScanResult = {
         repoUrl,
         findings,
         grade,
         scannedAt: new Date().toISOString(),
+        llmReviewRequested: llmReview,
+        llmReviewApplied: canReview,
       };
       await saveScanResult(job.id as string, result);
       await job.updateProgress('done');

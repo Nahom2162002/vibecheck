@@ -77,6 +77,16 @@ h1 {
   cursor: default;
 }
 
+.llm-review-toggle {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 0.85rem;
+  color: var(--text-dim);
+  font-size: 0.85rem;
+  cursor: pointer;
+}
+
 .error {
   color: var(--critical);
   margin-top: 1rem;

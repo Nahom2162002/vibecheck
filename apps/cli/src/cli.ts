@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 import { Command } from 'commander';
 import path from 'path';
-import { cloneRepo, isRemoteUrl, runScan } from '@vibecheck/engine';
+import { cloneRepo, isRemoteUrl, runScan, reviewFindings, type Finding } from '@vibecheck/engine';
 import { printReport } from './report/terminal';
 
 const program = new Command();
@@ -16,16 +16,32 @@ program
   .description('Scan a repo (GitHub URL or local path) and print a findings report')
   .argument('[repoUrl]', 'Git URL of the repo to clone and scan')
   .option('--local <path>', 'Scan a local directory instead of cloning a URL')
-  .action(async (repoUrl: string | undefined, opts: { local?: string }) => {
+  .option(
+    '--llm-review',
+    'Send missing-auth/idor/rate-limiting/client-side-validation/cors findings to Claude for a second-pass judgment (requires ANTHROPIC_API_KEY)'
+  )
+  .action(async (repoUrl: string | undefined, opts: { local?: string; llmReview?: boolean }) => {
     if (!repoUrl && !opts.local) {
       console.error('Provide a repo URL or --local <path>.');
       process.exitCode = 1;
       return;
     }
 
+    if (opts.llmReview && !process.env.ANTHROPIC_API_KEY) {
+      console.error('--llm-review requires ANTHROPIC_API_KEY to be set in the environment.');
+      process.exitCode = 1;
+      return;
+    }
+
+    async function maybeReview(repoPath: string, findings: Finding[]): Promise<Finding[]> {
+      if (!opts.llmReview) return findings;
+      console.log('Running AI second-pass review...');
+      return reviewFindings(repoPath, findings);
+    }
+
     if (opts.local) {
       const target = path.resolve(opts.local);
-      const findings = await runScan(target);
+      const findings = await maybeReview(target, await runScan(target));
       printReport(target, findings);
       return;
     }
@@ -40,7 +56,7 @@ program
     console.log(`Cloning ${url}...`);
     const { path: repoPath, cleanup } = await cloneRepo(url);
     try {
-      const findings = await runScan(repoPath);
+      const findings = await maybeReview(repoPath, await runScan(repoPath));
       printReport(url, findings);
     } finally {
       cleanup();

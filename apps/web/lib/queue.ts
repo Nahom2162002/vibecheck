@@ -5,6 +5,7 @@ export const SCAN_QUEUE_NAME = 'vibecheck-scan';
 
 export interface ScanJobData {
   repoUrl: string;
+  llmReview: boolean;
 }
 
 let queue: Queue<ScanJobData> | undefined;
