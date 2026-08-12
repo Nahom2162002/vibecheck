@@ -1,8 +1,7 @@
 #!/usr/bin/env node
 import { Command } from 'commander';
 import path from 'path';
-import { cloneRepo, isRemoteUrl } from './clone';
-import { runScan } from './engine/runner';
+import { cloneRepo, isRemoteUrl, runScan } from '@vibecheck/engine';
 import { printReport } from './report/terminal';
 
 const program = new Command();

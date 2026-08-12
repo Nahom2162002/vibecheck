@@ -1,0 +1,25 @@
+{
+  "name": "vibecheck",
+  "version": "0.1.0",
+  "description": "Security scanner for AI-generated (\"vibe-coded\") apps",
+  "license": "MIT",
+  "type": "commonjs",
+  "bin": {
+    "vibecheck": "dist/cli.js"
+  },
+  "main": "dist/cli.js",
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "dev": "ts-node src/cli.ts"
+  },
+  "dependencies": {
+    "@vibecheck/engine": "*",
+    "chalk": "^4.1.2",
+    "commander": "^12.1.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.14.0",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.5.4"
+  }
+}

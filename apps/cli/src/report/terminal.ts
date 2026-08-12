@@ -1,6 +1,5 @@
 import chalk from 'chalk';
-import type { Finding, Severity } from '../engine/types';
-import { computeGrade } from '../engine/grade';
+import { computeGrade, type Finding, type Severity } from '@vibecheck/engine';
 
 const SEVERITY_ORDER: Severity[] = ['critical', 'high', 'medium', 'low'];
 

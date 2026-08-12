@@ -1,33 +1,18 @@
 {
-  "name": "vibecheck",
+  "name": "vibecheck-monorepo",
   "version": "0.1.0",
-  "description": "Security scanner for AI-generated (\"vibe-coded\") apps",
+  "description": "Security scanner for AI-generated (\"vibe-coded\") apps — workspace root",
   "license": "MIT",
-  "type": "commonjs",
-  "bin": {
-    "vibecheck": "dist/cli.js"
-  },
-  "main": "dist/cli.js",
+  "private": true,
+  "workspaces": [
+    "packages/*",
+    "apps/*"
+  ],
   "scripts": {
-    "build": "tsc -p tsconfig.json && node scripts/verify-registry.js",
-    "dev": "ts-node src/cli.ts",
+    "build": "npm run build -w packages/engine && npm run build -w apps/cli",
     "fixtures:generate": "node fixtures/generate.js",
     "fixtures:generate:history": "node fixtures/generate-history-fixture.js",
-    "scan:fixture": "npm run build && npm run fixtures:generate && node dist/cli.js scan --local ./fixtures/vulnerable-app",
-    "scan:fixture:history": "npm run build && npm run fixtures:generate:history && node dist/cli.js scan --local ./fixtures/vulnerable-app-history"
-  },
-  "dependencies": {
-    "@babel/parser": "^7.25.0",
-    "@babel/traverse": "^7.25.0",
-    "chalk": "^4.1.2",
-    "commander": "^12.1.0",
-    "fast-glob": "^3.3.2",
-    "simple-git": "^3.25.0"
-  },
-  "devDependencies": {
-    "@types/babel__traverse": "^7.20.6",
-    "@types/node": "^20.14.0",
-    "ts-node": "^10.9.2",
-    "typescript": "^5.5.4"
+    "scan:fixture": "npm run build && npm run fixtures:generate && node apps/cli/dist/cli.js scan --local ./fixtures/vulnerable-app",
+    "scan:fixture:history": "npm run build && npm run fixtures:generate:history && node apps/cli/dist/cli.js scan --local ./fixtures/vulnerable-app-history"
   }
 }
