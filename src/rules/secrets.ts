@@ -3,7 +3,7 @@ import type { Finding, RuleModule } from '../engine/types';
 import { filterSecretScannableFiles, toAbsolute } from '../utils/files';
 import { lineNumberAt, shannonEntropy, looksLikePlaceholder } from '../utils/text';
 
-interface KnownPattern {
+export interface KnownPattern {
   id: string;
   regex: RegExp;
   severity: Finding['severity'];
@@ -11,7 +11,7 @@ interface KnownPattern {
   fix: string;
 }
 
-const KNOWN_PATTERNS: KnownPattern[] = [
+export const KNOWN_PATTERNS: KnownPattern[] = [
   {
     id: 'secrets/aws-access-key-id',
     regex: /\bAKIA[0-9A-Z]{16}\b/g,

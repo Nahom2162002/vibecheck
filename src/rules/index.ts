@@ -1,6 +1,4 @@
 import type { RuleModule } from '../engine/types';
-import { secretsRule } from './secrets';
-import { sqlInjectionRule } from './sql-injection';
-import { missingAuthRule } from './missing-auth';
+import { secretsHistoryRule } from './secrets-history';
 
-export const ruleRegistry: RuleModule[] = [secretsRule, sqlInjectionRule, missingAuthRule];
+export const ruleRegistry: RuleModule[] = [secretsHistoryRule];
