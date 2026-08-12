@@ -13,6 +13,7 @@
     "fixtures:generate": "node fixtures/generate.js",
     "fixtures:generate:history": "node fixtures/generate-history-fixture.js",
     "scan:fixture": "npm run build && npm run fixtures:generate && node apps/cli/dist/cli.js scan --local ./fixtures/vulnerable-app",
-    "scan:fixture:history": "npm run build && npm run fixtures:generate:history && node apps/cli/dist/cli.js scan --local ./fixtures/vulnerable-app-history"
+    "scan:fixture:history": "npm run build && npm run fixtures:generate:history && node apps/cli/dist/cli.js scan --local ./fixtures/vulnerable-app-history",
+    "dev:web": "npm run build -w packages/engine && npm run dev -w apps/web"
   }
 }
